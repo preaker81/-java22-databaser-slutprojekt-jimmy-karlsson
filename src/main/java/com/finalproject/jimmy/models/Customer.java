@@ -5,16 +5,14 @@ protected int id;
 protected String name;
 protected String SSN;
 protected String email;
-protected String address;
 protected String phone;
 protected String password;
 
-    public Customer(int id, String name, String SSN, String email, String address, String phone, String password) {
+    public Customer(int id, String name, String SSN, String email, String phone, String password) {
         this.id = id;
         this.name = name;
         this.SSN = SSN;
         this.email = email;
-        this.address = address;
         this.phone = phone;
         this.password = password;
     }
@@ -49,14 +47,6 @@ protected String password;
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getPhone() {
