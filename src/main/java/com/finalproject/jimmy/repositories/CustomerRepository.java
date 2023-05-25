@@ -18,7 +18,6 @@ public class CustomerRepository {
             preparedStatement.setString(4, phone);
             preparedStatement.setString(5, password);
 
-
             int result = preparedStatement.executeUpdate();
             System.out.println("Result: " + result);
 
@@ -27,6 +26,10 @@ public class CustomerRepository {
             e.printStackTrace();
         }
     }
+
+
+//    Add update method
+
 
     public Customer getCustomer(String SSN){
         String query = "SELECT * FROM customer WHERE SSN=?";
