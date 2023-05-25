@@ -1,9 +1,6 @@
 package com.finalproject.jimmy.models;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
-public class customer {
+public class Customer {
 protected int id;
 protected String name;
 protected String SSN;
@@ -12,7 +9,7 @@ protected String address;
 protected String phone;
 protected String password;
 
-    public customer(int id, String name, String SSN, String email, String address, String phone, String password) {
+    public Customer(int id, String name, String SSN, String email, String address, String phone, String password) {
         this.id = id;
         this.name = name;
         this.SSN = SSN;

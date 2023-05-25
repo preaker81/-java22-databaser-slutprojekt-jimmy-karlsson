@@ -3,7 +3,7 @@ package com.finalproject.jimmy.models;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class account {
+public class Account {
     protected int id;
     protected String account_name;
     protected Timestamp created;
@@ -11,7 +11,7 @@ public class account {
     protected BigDecimal balance;
     protected String account_number;
 
-    public account(int id, String account_name, Timestamp created, int customer_id, BigDecimal balance, String account_number) {
+    public Account(int id, String account_name, Timestamp created, int customer_id, BigDecimal balance, String account_number) {
         this.id = id;
         this.account_name = account_name;
         this.created = created;
