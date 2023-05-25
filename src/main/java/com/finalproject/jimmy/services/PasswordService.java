@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 public class PasswordService {
     private static final int SALT_LENGTH = 16;
 
-    public static String hashPassword(String password) {
+    public String hashPassword(String password) {
         // Create a SecureRandom object. This will be used to generate a random salt.
         SecureRandom random = new SecureRandom();
 
@@ -37,7 +37,7 @@ public class PasswordService {
     }
 
 
-    public static boolean verifyPassword(String password, String hashedPassword) {
+    public boolean verifyPassword(String password, String hashedPassword) {
         // Extract the hashed password and salt from the input string. The hashed password is the first 64 characters,
         // and the salt (stored as a hexadecimal string) is everything after.
         String passwordHash = hashedPassword.substring(0, 64);
@@ -70,7 +70,7 @@ public class PasswordService {
     }
 
 
-    private static String byteArrayToHexString(byte[] array) {
+    private String byteArrayToHexString(byte[] array) {
         StringBuilder sb = new StringBuilder(); // Instantiate a StringBuilder object to build the hex string.
         for (byte b : array) { // Iterate through each byte in the input array.
             sb.append(String.format("%02x", b)); // Convert each byte to a 2-digit hexadecimal string and append it to the StringBuilder.
@@ -78,7 +78,7 @@ public class PasswordService {
         return sb.toString(); // Convert the StringBuilder to a String and return it.
     }
 
-    private static byte[] hexStringToByteArray(String s) {
+    private byte[] hexStringToByteArray(String s) {
         int len = s.length(); // Get the length of the input string.
         byte[] data = new byte[len / 2]; // Instantiate a byte array half the length of the input string. Each pair of hex characters will be turned into a single byte.
         for (int i = 0; i < len; i += 2) { // Iterate through the input string, 2 characters at a time.
