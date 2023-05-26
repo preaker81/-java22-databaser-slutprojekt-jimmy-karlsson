@@ -5,6 +5,7 @@ import com.finalproject.jimmy.models.DBCSingleton;
 import java.sql.*;
 
 public class PopulateDatabaseService {
+    private final PasswordService passwordService;
     private final String DB_NAME = "db_finalproject";
     private final String ACCOUNT_TABLE_NAME = "account";
     private final String CUSTOMER_TABLE_NAME = "customer";
@@ -46,8 +47,18 @@ public class PopulateDatabaseService {
             + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
 
 
+    public PopulateDatabaseService(PasswordService passwordService) {
+        this.passwordService = passwordService;
+    }
+
     public void createDatabaseAndTables() {
-        try (Connection connection = DBCSingleton.getConnection()) {
+        Connection connection = null;
+        try {
+            connection = DBCSingleton.getConnection();
+            if (connection == null) {
+                System.out.println("Database connection is null");
+                return;
+            }
             if (!databaseExists(connection, DB_NAME)) {
                 createDatabase(connection, DB_NAME);
             }
@@ -62,6 +73,92 @@ public class PopulateDatabaseService {
             }
         } catch (SQLException e) {
             System.out.println("Unable to create database or tables: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private long createCustomer(Connection connection, String name, String SSN, String email, String phone, String password) throws SQLException {
+        String query = "INSERT INTO customer (name, SSN, email, phone, password) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, name);
+            statement.setString(2, SSN);
+            statement.setString(3, email);
+            statement.setString(4, phone);
+            String hashedPassword = passwordService.hashPassword(password);
+            statement.setString(5, hashedPassword);
+            statement.executeUpdate();
+            System.out.println("Customer " + name + " created");
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                } else {
+                    throw new SQLException("Creating customer failed, no ID obtained.");
+                }
+            }
+        }
+    }
+
+
+    private void createAccount(Connection connection, long customerId, String accountName, double balance, String accountNumber) throws SQLException {
+        String query = "INSERT INTO account (account_name, customer_id, balance, account_number) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, accountName);
+            statement.setLong(2, customerId);
+            statement.setDouble(3, balance);
+            statement.setString(4, accountNumber);
+            statement.executeUpdate();
+            System.out.println("Account " + accountName + " for customer ID " + customerId + " created");
+        }
+    }
+
+    private boolean customerExists(Connection connection, String SSN) throws SQLException {
+        String query = "SELECT * FROM customer WHERE SSN = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, SSN);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+
+    public void createTemplateCustomers() {
+        Connection connection = null;
+        try {
+            connection = DBCSingleton.getConnection();
+            if (connection == null) {
+                System.out.println("Database connection is null");
+                return;
+            }
+
+            if (!customerExists(connection, "20000101-0101")) {
+                long customerId1 = createCustomer(connection, "Anders Andersson", "20000101-0101", "anders.andersson@mail.se", "0701111111", "1111");
+                createAccount(connection, customerId1, "account 1", 1000, "111111111");
+            }
+
+            if (!customerExists(connection, "20000202-0202")) {
+                long customerId2 = createCustomer(connection, "Berit Bengtsson", "20000202-0202", "berit.bengtsson@mail.se", "0702222222", "2222");
+                createAccount(connection, customerId2, "account 1", 1000, "222222222");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Unable to create template customers: " + e.getMessage());
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

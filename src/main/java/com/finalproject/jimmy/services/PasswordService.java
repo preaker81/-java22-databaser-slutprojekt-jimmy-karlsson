@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 public class PasswordService {
-    private static final int SALT_LENGTH = 16;
+    private final int SALT_LENGTH = 16;
 
     public String hashPassword(String password) {
         // Create a SecureRandom object. This will be used to generate a random salt.
