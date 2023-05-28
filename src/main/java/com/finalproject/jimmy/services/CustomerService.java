@@ -1,5 +1,6 @@
 package com.finalproject.jimmy.services;
 
+import com.finalproject.jimmy.models.Customer;
 import com.finalproject.jimmy.repositories.CustomerRepository;
 
 public class CustomerService {
@@ -10,4 +11,19 @@ public class CustomerService {
         this.customerRepository = customerRepository;
         this.passwordService = passwordService;
     }
+
+    public Customer authenticateUser(String SSN, String password) {
+        Customer customer = customerRepository.getCustomer(SSN);
+
+        if (customer != null) {
+            boolean passwordMatch = passwordService.verifyPassword(password, customer.getPassword());
+
+            if (passwordMatch) {
+                return customer;
+            }
+        }
+
+        return null;
+    }
+
 }
