@@ -6,26 +6,31 @@ import com.finalproject.jimmy.models.DBCSingleton;
 import java.sql.*;
 
 public class CustomerRepository {
-    public void createCustomer(String name, String SSN, String email, String phone, String password){
-        String query = "INSERT INTO customer (name, SSN, email, phone, password) VALUES (?, ?, ?, ?, ?)";
-
+    public int createCustomer(Customer customer) {
         try (Connection connection = DBCSingleton.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO customer (name, ssn, email, phone, password) VALUES (?, ?, ?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, SSN);
-            preparedStatement.setString(3, email);
-            preparedStatement.setString(4, phone);
-            preparedStatement.setString(5, password);
+            statement.setString(1, customer.getName());
+            statement.setString(2, customer.getSSN());
+            statement.setString(3, customer.getEmail());
+            statement.setString(4, customer.getPhone());
+            statement.setString(5, customer.getPassword());
 
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
-
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet generatedKeys = statement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
-            System.out.println("failed!");
             e.printStackTrace();
         }
+        return -1; // Return -1 if the customer creation fails or the index cannot be retrieved.
     }
+
 
 
 //    Add update method

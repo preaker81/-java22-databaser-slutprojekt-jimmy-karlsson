@@ -26,4 +26,10 @@ public class CustomerService {
         return null;
     }
 
+//    SSN format validation
+    public boolean isValidSSN(String ssn) {
+        // Validate SSN format: YYYYMMDD-XXXX
+        return ssn.matches("\\d{8}-\\d{4}");
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.finalproject.jimmy;
 
+import com.finalproject.jimmy.repositories.AccountRepository;
 import com.finalproject.jimmy.repositories.CustomerRepository;
 import com.finalproject.jimmy.services.CustomerService;
 import com.finalproject.jimmy.services.PasswordService;
@@ -16,14 +17,25 @@ public class Main {
 
 //        Repositories
         CustomerRepository customerRepository = new CustomerRepository();
+        AccountRepository accountRepository = new AccountRepository();
 
 //        Services
         PasswordService passwordService = new PasswordService();
-        PopulateDatabaseService populateDatabaseService = new PopulateDatabaseService(passwordService);
-        CustomerService customerService = new CustomerService(customerRepository, passwordService);
+        PopulateDatabaseService populateDatabaseService = new PopulateDatabaseService(
+                passwordService);
+
+        CustomerService customerService = new CustomerService(
+                customerRepository,
+                passwordService);
 
 //        Console Interface
-        ConsoleInterface consoleInterface = new ConsoleInterface(populateDatabaseService, customerService, scanner);
+        ConsoleInterface consoleInterface = new ConsoleInterface(
+                customerRepository,
+                accountRepository,
+                populateDatabaseService,
+                passwordService,
+                customerService,
+                scanner);
 
 
 //        Starting the program
