@@ -3,10 +3,10 @@ package com.finalproject.jimmy.repositories;
 import com.finalproject.jimmy.models.Account;
 import com.finalproject.jimmy.models.DBCSingleton;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Random;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountRepository {
 
@@ -30,14 +30,102 @@ public class AccountRepository {
         }
     }
 
+    public boolean deleteAccount(String accountNumber) {
+        try (Connection connection = DBCSingleton.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "DELETE FROM account WHERE account_number = ?")) {
 
-    //    Generates a random account number
-    private final int MIN_ACCOUNT_NUMBER = 100000000;
-    private final int MAX_ACCOUNT_NUMBER = 999999999;
-        public String generateAccountNumber() {
-            Random random = new Random();
-            int accountNumber = random.nextInt(MAX_ACCOUNT_NUMBER - MIN_ACCOUNT_NUMBER + 1) + MIN_ACCOUNT_NUMBER;
-            return String.format("%09d", accountNumber);
+            statement.setString(1, accountNumber);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
+
+    public List<Account> getAccountsByCustomerID(int inputCustomerId) {
+        List<Account> accountList = new ArrayList<>();
+
+        try (Connection connection = DBCSingleton.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM account WHERE customer_id = ?")) {
+
+            statement.setInt(1, inputCustomerId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String account_name = resultSet.getString("account_name");
+                    Timestamp created = resultSet.getTimestamp("created");
+                    int customer_id = resultSet.getInt("customer_id");
+                    BigDecimal balance = resultSet.getBigDecimal("balance");
+                    String account_number = resultSet.getString("account_number");
+
+                    Account account = new Account(id, account_name, created, customer_id, balance, account_number);
+                    accountList.add(account);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accountList;
+    }
+
+    public Account getAccountByAccountNumber(String accountNumber) {
+        Account account = null;
+
+        try (Connection connection = DBCSingleton.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM account WHERE account_number = ?")) {
+
+            statement.setString(1, accountNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String account_name = resultSet.getString("account_name");
+                    Timestamp created = resultSet.getTimestamp("created");
+                    int customer_id = resultSet.getInt("customer_id");
+                    BigDecimal balance = resultSet.getBigDecimal("balance");
+                    String account_number = resultSet.getString("account_number");
+
+                    account = new Account(id, account_name, created, customer_id, balance, account_number);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return account;
+    }
+
+
+
+    public boolean accountExists(String accountNumber) {
+        try (Connection connection = DBCSingleton.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT COUNT(*) FROM account WHERE account_number = ?")) {
+
+            statement.setString(1, accountNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+
+
 
 }

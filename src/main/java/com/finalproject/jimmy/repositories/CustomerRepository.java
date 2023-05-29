@@ -32,11 +32,28 @@ public class CustomerRepository {
     }
 
 
+    public boolean updateCustomer(Customer customer) {
+        try (Connection connection = DBCSingleton.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE customer SET name = ?, ssn = ?, email = ?, phone = ?, password = ? WHERE id = ?")) {
 
-//    Add update method
+            statement.setString(1, customer.getName());
+            statement.setString(2, customer.getSSN());
+            statement.setString(3, customer.getEmail());
+            statement.setString(4, customer.getPhone());
+            statement.setString(5, customer.getPassword());
+            statement.setInt(6, customer.getId());
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Return false if the update fails.
+    }
 
 
-    public Customer getCustomer(String SSN){
+    public Customer getCustomer(String SSN) {
         String query = "SELECT * FROM customer WHERE SSN=?";
 
         try (Connection connection = DBCSingleton.getConnection();
@@ -64,7 +81,7 @@ public class CustomerRepository {
         return null;
     }
 
-    public boolean deleteCustomer(String SSN){
+    public boolean deleteCustomer(String SSN) {
         String query = "DELETE FROM customer WHERE SSN = ?";
 
         try (Connection connection = DBCSingleton.getConnection();
