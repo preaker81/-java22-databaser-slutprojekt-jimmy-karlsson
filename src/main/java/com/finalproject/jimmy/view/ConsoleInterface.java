@@ -216,10 +216,10 @@ public class ConsoleInterface {
                     updateCustomerInfo(customer);
                     break;
                 case 4:
-
+                    transferMoneyMenu(customer);
                     break;
                 case 5:
-//                    transferMoneyMenu(customer);
+
                     break;
                 case 0:
                     System.out.println("Going back to the previous menu...");
@@ -394,7 +394,16 @@ public class ConsoleInterface {
         }
     }
 
+    public void transferMoneyMenu(Customer customer) {
+        System.out.println(ConsoleColors.CYAN);
+        System.out.println("*******************************************************************");
+        System.out.println("--------------- === Update customer information === -------------- ");
+        System.out.println("*******************************************************************");
+        System.out.println(ConsoleColors.RESET);
 
+        System.out.println("Sender account number: ");
+        System.out.println("Receiver account number: ");
+    }
 
 }
 
