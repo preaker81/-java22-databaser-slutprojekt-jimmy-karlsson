@@ -29,7 +29,7 @@ public class AccountRepository {
         }
     }
 
-    public boolean deleteAccount(String accountNumber) {
+    public boolean deleteAccountByAccountNumber(String accountNumber) {
         try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "DELETE FROM account WHERE account_number = ?")) {
@@ -123,6 +123,21 @@ public class AccountRepository {
         return false;
     }
 
+    public boolean updateBalance(String accountNumber, int newBalance) {
+        try (Connection connection = DBCSingleton.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE account SET balance = ? WHERE account_number = ?")) {
+
+            statement.setInt(1, newBalance);
+            statement.setString(2, accountNumber);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
 

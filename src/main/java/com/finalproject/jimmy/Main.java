@@ -27,14 +27,16 @@ public class Main {
                 passwordService
         );
 
-        AccountService accountService = new AccountService();
-
         CustomerService customerService = new CustomerService(
                 customerRepository,
                 passwordService
         );
 
-        TransactionService transactionService = new TransactionService();
+        AccountService accountService = new AccountService();
+        TransactionService transactionService = new TransactionService(
+                accountRepository,
+                transactionRepository
+        );
 
 //        Console Interface
         ConsoleInterface consoleInterface = new ConsoleInterface(
@@ -42,8 +44,9 @@ public class Main {
                 accountRepository,
                 populateDatabaseService,
                 passwordService,
-                accountService,
                 customerService,
+                accountService,
+                transactionService,
                 scanner
         );
 

@@ -7,10 +7,7 @@ import com.finalproject.jimmy.models.Customer;
 import com.finalproject.jimmy.repositories.AccountRepository;
 import com.finalproject.jimmy.repositories.CustomerRepository;
 
-import com.finalproject.jimmy.services.AccountService;
-import com.finalproject.jimmy.services.CustomerService;
-import com.finalproject.jimmy.services.PasswordService;
-import com.finalproject.jimmy.services.PopulateDatabaseService;
+import com.finalproject.jimmy.services.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -23,8 +20,9 @@ public class ConsoleInterface {
     private final AccountRepository accountRepository;
     private final PopulateDatabaseService populateDatabaseService;
     private final PasswordService passwordService;
-    private final AccountService accountService;
     private final CustomerService customerService;
+    private final AccountService accountService;
+    private final TransactionService transactionService;
     private final Scanner scanner;
 
     public ConsoleInterface(
@@ -32,15 +30,17 @@ public class ConsoleInterface {
             AccountRepository accountRepository,
             PopulateDatabaseService populateDatabaseService,
             PasswordService passwordService,
-            AccountService accountService,
             CustomerService customerService,
+            AccountService accountService,
+            TransactionService transactionService,
             Scanner scanner) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
         this.populateDatabaseService = populateDatabaseService;
         this.passwordService = passwordService;
-        this.accountService = accountService;
         this.customerService = customerService;
+        this.accountService = accountService;
+        this.transactionService = transactionService;
         this.scanner = scanner;
     }
 
@@ -196,8 +196,8 @@ public class ConsoleInterface {
             System.out.println("1. " + customer.getName() + "´s Balance accounts.");
             System.out.println("2. Show user information.");
             System.out.println("3. Update customer information");
-            System.out.println("4. Empty");
-            System.out.println("5. Transfer money.");
+            System.out.println("4. Transfer money.");
+            System.out.println("5. Empty");
             System.out.println("0. Go back");
             System.out.println("");
 
@@ -304,7 +304,7 @@ public class ConsoleInterface {
         if (accountService.isValidConfirmation(accountNumber, confirmAccountNumber)) {
             Account account = accountRepository.getAccountByAccountNumber(accountNumber); // New line
             if (account != null && account.getCustomer_id() == customer.getId()) { // Check if the account belongs to the customer
-                accountRepository.deleteAccount(accountNumber);
+                accountRepository.deleteAccountByAccountNumber(accountNumber);
                 System.out.println("The balance account was successfully deleted.");
             } else if (account == null) {
                 System.out.println("The account you provided does not exist, make sure the information is correct and try again.");
@@ -333,8 +333,8 @@ public class ConsoleInterface {
         for (Account account : accounts) {
             System.out.println(
                     "Account Number: " + account.getAccount_number() + " " +
-                    "Account Name: " + account.getAccount_name() + " " +
-                    "Balance: " + account.getBalance()
+                            "Account Name: " + account.getAccount_name() + " " +
+                            "Balance: " + account.getBalance()
             );
         }
 
@@ -382,9 +382,9 @@ public class ConsoleInterface {
         }
 
         // If any field has been updated, we update the customer in the database
-        if(isUpdated) {
+        if (isUpdated) {
             boolean result = customerRepository.updateCustomer(customer);
-            if(result) {
+            if (result) {
                 System.out.println("Customer data successfully updated in the database.");
             } else {
                 System.out.println("Failed to update customer data in the database.");
@@ -395,15 +395,41 @@ public class ConsoleInterface {
     }
 
     public void transferMoneyMenu(Customer customer) {
+        List<Account> accounts = accountRepository.getAccountsByCustomerID(customer.getId());
         System.out.println(ConsoleColors.CYAN);
         System.out.println("*******************************************************************");
         System.out.println("--------------- === Update customer information === -------------- ");
         System.out.println("*******************************************************************");
         System.out.println(ConsoleColors.RESET);
+        System.out.println("Your accounts:");
+        for (Account account : accounts) {
+            System.out.println(
+                    "Account Number: " + account.getAccount_number() + " " +
+                    "Account Name: " + account.getAccount_name() + " " +
+                    "Balance: " + account.getBalance()
+            );
+        }
 
         System.out.println("Sender account number: ");
+        String sender = scanner.nextLine();
         System.out.println("Receiver account number: ");
+        String receiver = scanner.nextLine();
+        System.out.println("Amount transfered");
+        int amount = scanner.nextInt();
+        scanner.nextLine(); // consume remaining newline
+
+        System.out.println("Transaction message: ");
+        String message = scanner.nextLine();
+
+        boolean result = transactionService.performTransaction(sender, receiver, amount, message);
+
+        if (result) {
+            System.out.println("Transaction completed successfully.");
+        } else {
+            System.out.println("Transaction failed. Please check the details and try again.");
+        }
     }
+
 
 }
 
