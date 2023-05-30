@@ -137,7 +137,7 @@ public class ConsoleInterface {
 
 
     private void loginMenu() {
-        printMenuHeader("Login Menu");
+        printMenuHeader("Login Menu"); // Prints the header for the menu
         System.out.println(ConsoleColors.YELLOW + "You have two template customer logins you can use.");
         System.out.println("Customer 1: Anders Andersson, SSN = 20000101-0101, password = 1111.");
         System.out.println("Customer 2: Berit Bengtsson, SSN = 20000202-0202, password = 2222.");
@@ -170,7 +170,7 @@ public class ConsoleInterface {
     }
 
     public void deleteCustomerAccount(Customer customer) {
-        printMenuHeader("Delete Customer account");
+        printMenuHeader("Delete Customer account"); // Prints the header for the menu
         System.out.println("!WARNING! This action is irreversible !WARNING!");
 
         System.out.println("Enter SSN: ");
@@ -188,7 +188,7 @@ public class ConsoleInterface {
         int choice;
 
         do {
-            printMenuHeader("Logged in menu");
+            printMenuHeader("Logged in menu"); // Prints the header for the menu
             System.out.println("1. " + customer.getName() + "´s Balance accounts.");
             System.out.println("2. Show user information.");
             System.out.println("3. Update customer information");
@@ -230,7 +230,9 @@ public class ConsoleInterface {
         int choice;
 
         do {
-            printMenuHeader("Balance account menu");
+            printMenuHeader("Balance account menu"); // Prints the header for the menu
+            printCustomerAccounts(customer.getId()); // Prints the customers accounts.
+
             System.out.println("1. Create a new balance account");
             System.out.println("2. Delete a existing balance account");
             System.out.println("0. Go back");
@@ -257,7 +259,9 @@ public class ConsoleInterface {
     }
 
     private void createBalanceAccountMenu(Customer customer) {
-        printMenuHeader("Create balance account menu");
+        printMenuHeader("Create balance account menu"); // Prints the header for the menu
+        printCustomerAccounts(customer.getId()); // Prints the customers accounts.
+
         System.out.println("Enter the account details...");
         System.out.println("");
         System.out.println("Account name: ");
@@ -278,7 +282,9 @@ public class ConsoleInterface {
 
 
     private void deleteBalanceAccountMenu(Customer customer) {
-        printMenuHeader("Delete balance account menu");
+        printMenuHeader("Delete balance account menu"); // Prints the header for the menu
+        printCustomerAccounts(customer.getId()); // Prints the customers accounts.
+
         System.out.println("!WARNING! This action is irreversible !WARNING!");
         System.out.println("");
         System.out.println("Enter the account number [#########]");
@@ -303,26 +309,18 @@ public class ConsoleInterface {
 
 
     private void showUserInfoMenu(Customer customer) {
-        List<Account> accounts = accountRepository.getAccountsByCustomerID(customer.getId());
-        printMenuHeader("User information");
+        printMenuHeader("User information"); // Prints the header for the menu
         System.out.println("Name: " + customer.getName());
         System.out.println("SSN: " + customer.getSSN());
         System.out.println("Email: " + customer.getEmail());
         System.out.println("Phone number: " + customer.getPhone());
         System.out.println("-------------------------------------------------------------------");
-        System.out.println("ACCOUNTS: ");
-        for (Account account : accounts) {
-            System.out.println(
-                    "Account Number: " + account.getAccount_number() + " " +
-                            "Account Name: " + account.getAccount_name() + " " +
-                            "Balance: " + account.getBalance()
-            );
-        }
+        printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
     }
 
     public void updateCustomerInfo(Customer customer) {
-        printMenuHeader("Update customer information");
+        printMenuHeader("Update customer information"); // Prints the header for the menu
         System.out.println("Enter your new information in the prompt.");
         System.out.println("If you don't need to update a specific field you can just press ENTER.");
 
@@ -372,18 +370,9 @@ public class ConsoleInterface {
     }
 
     public void transferMoneyMenu(Customer customer) {
-        List<Account> accounts = accountRepository.getAccountsByCustomerID(customer.getId());
 
-        printMenuHeader("Update customer information");
-
-        System.out.println("Your accounts:");
-        for (Account account : accounts) {
-            System.out.println(
-                    "Account Number: " + account.getAccount_number() + " " +
-                            "Account Name: " + account.getAccount_name() + " " +
-                            "Balance: " + account.getBalance()
-            );
-        }
+        printMenuHeader("Update customer information"); // Prints the header for the menu
+        printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
         System.out.println("Sender account number: ");
         String sender = scanner.nextLine();
@@ -412,6 +401,20 @@ public class ConsoleInterface {
         System.out.println("--------------- === " + header + " === -------------- ");
         System.out.println("*******************************************************************");
         System.out.println(ConsoleColors.RESET);
+    }
+
+    private void printCustomerAccounts(int customerID) {
+        List<Account> accounts = accountRepository.getAccountsByCustomerID(customerID);
+
+        System.out.println(ConsoleColors.YELLOW + "User accounts:" + ConsoleColors.RESET);
+        for (Account account : accounts) {
+            System.out.println(
+                    "Account Number: " + account.getAccount_number() + " " +
+                            "Account Name: " + account.getAccount_name() + " " +
+                            "Balance: " + account.getBalance()
+            );
+        }
+        System.out.println("");
     }
 
 
