@@ -52,14 +52,9 @@ public class ConsoleInterface {
         int choice;
 
         do {
-            System.out.println(ConsoleColors.CYAN);
-            System.out.println("*******************************************************************");
-            System.out.println("----------------------- === Start Menu === ----------------------- ");
-            System.out.println("*******************************************************************");
-            System.out.println(ConsoleColors.RESET);
+            printMenuHeader("Start Menu");
             System.out.println("1. Log in.");
             System.out.println("2. Create customer account.");
-            System.out.println("3. Close application.");
             System.out.println("0. Exit");
 
             System.out.print("Enter your choice: ");
@@ -75,9 +70,6 @@ public class ConsoleInterface {
                         break;
                     case 2:
                         createCustomerAccountMenu();
-                        break;
-                    case 3:
-
                         break;
                     case 0:
                         System.out.println("Exiting...");
@@ -96,11 +88,7 @@ public class ConsoleInterface {
 
 
     private void createCustomerAccountMenu() {
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------- === Create new customer account === -------------- ");
-        System.out.println("*******************************************************************");
-        System.out.println(ConsoleColors.RESET);
+        printMenuHeader("Create new customer account");
 
         System.out.println("Enter customer details:");
         System.out.print("Name: ");
@@ -149,13 +137,10 @@ public class ConsoleInterface {
 
 
     private void loginMenu() {
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------------------- Login Menu ---------------------------");
-        System.out.println("You have two template customer logins you can use.");
+        printMenuHeader("Login Menu");
+        System.out.println(ConsoleColors.YELLOW + "You have two template customer logins you can use.");
         System.out.println("Customer 1: Anders Andersson, SSN = 20000101-0101, password = 1111.");
         System.out.println("Customer 2: Berit Bengtsson, SSN = 20000202-0202, password = 2222.");
-        System.out.println("*******************************************************************");
         System.out.println(ConsoleColors.RESET);
 
         boolean loggedIn = false;
@@ -173,7 +158,7 @@ public class ConsoleInterface {
                 loggedIn = true;
                 loggedInMenu(customer);
             } else {
-                System.out.println("Login failed. Please try again or enter 'exit' to quit.");
+                System.out.println(ConsoleColors.RED + "Login failed. Please try again or enter 'exit' to quit." + ConsoleColors.RESET);
                 System.out.print("Enter 'exit' to quit or any key to retry: ");
                 String input = scanner.nextLine();
 
@@ -184,20 +169,31 @@ public class ConsoleInterface {
         }
     }
 
+    public void deleteCustomerAccount(Customer customer) {
+        printMenuHeader("Delete Customer account");
+        System.out.println("!WARNING! This action is irreversible !WARNING!");
+
+        System.out.println("Enter SSN: ");
+        String SSN = scanner.nextLine();
+        System.out.println("Enter 'DELETE CUSTOMER ACCOUNT' to verify.");
+        String verification = scanner.nextLine();
+
+        if (customer.getSSN().equals(SSN) && "DELETE CUSTOMER ACCOUNT".equals(verification)) {
+            customerRepository.deleteCustomer(SSN);
+        }
+
+    }
+
     private void loggedInMenu(Customer customer) {
         int choice;
 
         do {
-            System.out.println(ConsoleColors.CYAN);
-            System.out.println("*******************************************************************");
-            System.out.println("--------------------- === Logged in menu === --------------------- ");
-            System.out.println("*******************************************************************");
-            System.out.println(ConsoleColors.RESET);
+            printMenuHeader("Logged in menu");
             System.out.println("1. " + customer.getName() + "´s Balance accounts.");
             System.out.println("2. Show user information.");
             System.out.println("3. Update customer information");
             System.out.println("4. Transfer money.");
-            System.out.println("5. Empty");
+            System.out.println("5. Delete Customer Account");
             System.out.println("0. Go back");
             System.out.println("");
 
@@ -219,7 +215,7 @@ public class ConsoleInterface {
                     transferMoneyMenu(customer);
                     break;
                 case 5:
-
+                    deleteCustomerAccount(customer);
                     break;
                 case 0:
                     System.out.println("Going back to the previous menu...");
@@ -234,11 +230,7 @@ public class ConsoleInterface {
         int choice;
 
         do {
-            System.out.println(ConsoleColors.CYAN);
-            System.out.println("*******************************************************************");
-            System.out.println("------------------ === Balance account menu === ------------------ ");
-            System.out.println("*******************************************************************");
-            System.out.println(ConsoleColors.RESET);
+            printMenuHeader("Balance account menu");
             System.out.println("1. Create a new balance account");
             System.out.println("2. Delete a existing balance account");
             System.out.println("0. Go back");
@@ -265,11 +257,7 @@ public class ConsoleInterface {
     }
 
     private void createBalanceAccountMenu(Customer customer) {
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------- === Create balance account menu === -------------- ");
-        System.out.println("*******************************************************************");
-        System.out.println(ConsoleColors.RESET);
+        printMenuHeader("Create balance account menu");
         System.out.println("Enter the account details...");
         System.out.println("");
         System.out.println("Account name: ");
@@ -288,12 +276,9 @@ public class ConsoleInterface {
         }
     }
 
+
     private void deleteBalanceAccountMenu(Customer customer) {
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------- === Delete balance account menu === -------------- ");
-        System.out.println("*******************************************************************");
-        System.out.println(ConsoleColors.RESET);
+        printMenuHeader("Delete balance account menu");
         System.out.println("!WARNING! This action is irreversible !WARNING!");
         System.out.println("");
         System.out.println("Enter the account number [#########]");
@@ -319,11 +304,7 @@ public class ConsoleInterface {
 
     private void showUserInfoMenu(Customer customer) {
         List<Account> accounts = accountRepository.getAccountsByCustomerID(customer.getId());
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------------- === User information === ------------------- ");
-        System.out.println("*******************************************************************");
-        System.out.println(ConsoleColors.RESET);
+        printMenuHeader("User information");
         System.out.println("Name: " + customer.getName());
         System.out.println("SSN: " + customer.getSSN());
         System.out.println("Email: " + customer.getEmail());
@@ -341,11 +322,7 @@ public class ConsoleInterface {
     }
 
     public void updateCustomerInfo(Customer customer) {
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------- === Update customer information === -------------- ");
-        System.out.println("*******************************************************************");
-        System.out.println(ConsoleColors.RESET);
+        printMenuHeader("Update customer information");
         System.out.println("Enter your new information in the prompt.");
         System.out.println("If you don't need to update a specific field you can just press ENTER.");
 
@@ -396,17 +373,15 @@ public class ConsoleInterface {
 
     public void transferMoneyMenu(Customer customer) {
         List<Account> accounts = accountRepository.getAccountsByCustomerID(customer.getId());
-        System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------- === Update customer information === -------------- ");
-        System.out.println("*******************************************************************");
-        System.out.println(ConsoleColors.RESET);
+
+        printMenuHeader("Update customer information");
+
         System.out.println("Your accounts:");
         for (Account account : accounts) {
             System.out.println(
                     "Account Number: " + account.getAccount_number() + " " +
-                    "Account Name: " + account.getAccount_name() + " " +
-                    "Balance: " + account.getBalance()
+                            "Account Name: " + account.getAccount_name() + " " +
+                            "Balance: " + account.getBalance()
             );
         }
 
@@ -428,6 +403,15 @@ public class ConsoleInterface {
         } else {
             System.out.println("Transaction failed. Please check the details and try again.");
         }
+    }
+
+
+    public void printMenuHeader(String header) {
+        System.out.println(ConsoleColors.CYAN);
+        System.out.println("*******************************************************************");
+        System.out.println("--------------- === " + header + " === -------------- ");
+        System.out.println("*******************************************************************");
+        System.out.println(ConsoleColors.RESET);
     }
 
 
