@@ -17,7 +17,9 @@ public class Main {
 //        Repositories
         AccountRepository accountRepository = new AccountRepository();
         CustomerRepository customerRepository = new CustomerRepository();
-        TransactionRepository transactionRepository = new TransactionRepository();
+        TransactionRepository transactionRepository = new TransactionRepository(
+                accountRepository
+        );
 
 //        Services
         PasswordService passwordService = new PasswordService();

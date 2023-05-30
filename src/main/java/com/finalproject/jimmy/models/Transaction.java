@@ -1,17 +1,16 @@
 package com.finalproject.jimmy.models;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Transaction {
 protected int id;
 protected int sender;
 protected int reciever;
-protected BigDecimal amount;
+protected int amount;
 protected Timestamp created;
 protected String message;
 
-    public Transaction(int id, int sender, int reciever, BigDecimal amount, Timestamp created, String message) {
+    public Transaction(int id, int sender, int reciever, int amount, Timestamp created, String message) {
         this.id = id;
         this.sender = sender;
         this.reciever = reciever;
@@ -44,11 +43,11 @@ protected String message;
         this.reciever = reciever;
     }
 
-    public BigDecimal getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 

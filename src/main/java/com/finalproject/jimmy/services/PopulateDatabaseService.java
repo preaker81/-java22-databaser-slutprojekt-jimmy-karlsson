@@ -15,12 +15,13 @@ public class PopulateDatabaseService {
             + "`account_name` varchar(16) NOT NULL DEFAULT 'unnamed account',"
             + "`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
             + "`customer_id` bigint unsigned NOT NULL,"
-            + "`balance` decimal(19,4) DEFAULT NULL,"
+            + "`balance` int DEFAULT NULL,"
             + "`account_number` varchar(9) DEFAULT NULL,"
             + "UNIQUE KEY `id` (`id`),"
             + "KEY `account_customer__fk` (`customer_id`),"
             + "CONSTRAINT `account_customer__fk` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE"
             + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+
 
     private final String CUSTOMER_TABLE_CREATION_QUERY = "CREATE TABLE `customer` ("
             + "`id` bigint unsigned NOT NULL AUTO_INCREMENT,"
@@ -36,7 +37,7 @@ public class PopulateDatabaseService {
             + "`id` bigint unsigned NOT NULL AUTO_INCREMENT,"
             + "`sender` bigint unsigned NOT NULL DEFAULT '0',"
             + "`receiver` bigint unsigned NOT NULL DEFAULT '0',"
-            + "`amount` decimal(19,4) NOT NULL DEFAULT '0.0000',"
+            + "`amount` int NOT NULL DEFAULT '0',"
             + "`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
             + "`message` text,"
             + "UNIQUE KEY `id` (`id`),"
@@ -45,6 +46,7 @@ public class PopulateDatabaseService {
             + "CONSTRAINT `transaction_account__fk` FOREIGN KEY (`sender`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,"
             + "CONSTRAINT `transaction_account__fk2` FOREIGN KEY (`receiver`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE"
             + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+
 
 
     public PopulateDatabaseService(PasswordService passwordService) {

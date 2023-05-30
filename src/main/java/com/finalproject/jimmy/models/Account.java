@@ -8,10 +8,10 @@ public class Account {
     protected String account_name;
     protected Timestamp created;
     protected int customer_id;
-    protected BigDecimal balance;
+    protected int balance;
     protected String account_number;
 
-    public Account(int id, String account_name, Timestamp created, int customer_id, BigDecimal balance, String account_number) {
+    public Account(int id, String account_name, Timestamp created, int customer_id, int balance, String account_number) {
         this.id = id;
         this.account_name = account_name;
         this.created = created;
@@ -52,11 +52,11 @@ public class Account {
         this.customer_id = customer_id;
     }
 
-    public BigDecimal getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 

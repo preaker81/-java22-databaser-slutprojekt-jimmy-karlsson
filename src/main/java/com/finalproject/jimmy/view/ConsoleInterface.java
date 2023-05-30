@@ -12,7 +12,6 @@ import com.finalproject.jimmy.services.CustomerService;
 import com.finalproject.jimmy.services.PasswordService;
 import com.finalproject.jimmy.services.PopulateDatabaseService;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -131,7 +130,7 @@ public class ConsoleInterface {
 
             // Create default account values
             String accountName = "Default Account";
-            BigDecimal initialBalance = new BigDecimal("1000");
+            int initialBalance = 1000;
             String accountNumber = accountService.generateAccountNumber();
 
             // Create the account object
@@ -276,7 +275,7 @@ public class ConsoleInterface {
         System.out.println("Account name: ");
         String accountName = scanner.nextLine();
         System.out.println("How much money should it have initially: ");
-        BigDecimal initialBalance = scanner.nextBigDecimal();
+        int initialBalance = scanner.nextInt();
 
 
         Account account = new Account(0, accountName, Timestamp.from(Instant.now()), customer.getId(), initialBalance, accountService.generateAccountNumber());

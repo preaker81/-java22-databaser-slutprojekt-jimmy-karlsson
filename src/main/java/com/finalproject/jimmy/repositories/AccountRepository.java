@@ -3,7 +3,6 @@ package com.finalproject.jimmy.repositories;
 import com.finalproject.jimmy.models.Account;
 import com.finalproject.jimmy.models.DBCSingleton;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class AccountRepository {
             statement.setString(1, account.getAccount_name());
             statement.setTimestamp(2, account.getCreated());
             statement.setInt(3, account.getCustomer_id());
-            statement.setBigDecimal(4, account.getBalance());
+            statement.setInt(4, account.getBalance());
             statement.setString(5, account.getAccount_number());
 
             int rowsAffected = statement.executeUpdate();
@@ -60,7 +59,7 @@ public class AccountRepository {
                     String account_name = resultSet.getString("account_name");
                     Timestamp created = resultSet.getTimestamp("created");
                     int customer_id = resultSet.getInt("customer_id");
-                    BigDecimal balance = resultSet.getBigDecimal("balance");
+                    int balance = resultSet.getInt("balance");
                     String account_number = resultSet.getString("account_number");
 
                     Account account = new Account(id, account_name, created, customer_id, balance, account_number);
@@ -89,7 +88,7 @@ public class AccountRepository {
                     String account_name = resultSet.getString("account_name");
                     Timestamp created = resultSet.getTimestamp("created");
                     int customer_id = resultSet.getInt("customer_id");
-                    BigDecimal balance = resultSet.getBigDecimal("balance");
+                    int balance = resultSet.getInt("balance");
                     String account_number = resultSet.getString("account_number");
 
                     account = new Account(id, account_name, created, customer_id, balance, account_number);
