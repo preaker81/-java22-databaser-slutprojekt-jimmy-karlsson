@@ -5,18 +5,21 @@ import java.sql.Timestamp;
 public class Transaction {
 protected int id;
 protected int sender;
-protected int reciever;
+protected int receiver;
 protected int amount;
 protected Timestamp created;
 protected String message;
 
-    public Transaction(int id, int sender, int reciever, int amount, Timestamp created, String message) {
+    public Transaction(int id, int sender, int receiver, int amount, Timestamp created, String message) {
         this.id = id;
         this.sender = sender;
-        this.reciever = reciever;
+        this.receiver = receiver;
         this.amount = amount;
         this.created = created;
         this.message = message;
+    }
+
+    public Transaction() {
     }
 
     public int getId() {
@@ -35,12 +38,12 @@ protected String message;
         this.sender = sender;
     }
 
-    public int getReciever() {
-        return reciever;
+    public int getReceiver() {
+        return receiver;
     }
 
-    public void setReciever(int reciever) {
-        this.reciever = reciever;
+    public void setReceiver(int receiver) {
+        this.receiver = receiver;
     }
 
     public int getAmount() {

@@ -4,13 +4,17 @@ package com.finalproject.jimmy.view;
 import com.finalproject.jimmy.models.Account;
 import com.finalproject.jimmy.models.Customer;
 
+import com.finalproject.jimmy.models.Transaction;
 import com.finalproject.jimmy.repositories.AccountRepository;
 import com.finalproject.jimmy.repositories.CustomerRepository;
 
 import com.finalproject.jimmy.services.*;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -235,6 +239,7 @@ public class ConsoleInterface {
 
             System.out.println("1. Create a new balance account");
             System.out.println("2. Delete a existing balance account");
+            System.out.println("3. Show all transactions made.");
             System.out.println("0. Go back");
             System.out.println("");
 
@@ -248,6 +253,9 @@ public class ConsoleInterface {
                     break;
                 case 2:
                     deleteBalanceAccountMenu(customer);
+                    break;
+                case 3:
+                    showAllCustomerTransaction(customer);
                     break;
                 case 0:
                     System.out.println("Going back to the previous menu...");
@@ -307,6 +315,43 @@ public class ConsoleInterface {
         }
     }
 
+    private void showAllCustomerTransaction(Customer customer) {
+        printMenuHeader("Customer Transactions");
+
+        System.out.println(ConsoleColors.YELLOW + "Please provide a start and an end date for the transactions you want to see");
+        System.out.println(ConsoleColors.RESET);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        System.out.println("Start date 'YYYY-MM-DD'");
+        String startDateStr = scanner.next();
+        while(!transactionService.isValidDateFormat(startDateStr)){
+            System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
+            startDateStr = scanner.next();
+        }
+
+        System.out.println("End date 'YYYY-MM-DD'");
+        String endDateStr = scanner.next();
+        while(!transactionService.isValidDateFormat(endDateStr)){
+            System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
+            endDateStr = scanner.next();
+        }
+
+        try {
+            Date startDate = dateFormat.parse(startDateStr);
+            Date endDate = dateFormat.parse(endDateStr);
+
+            List<Transaction> transactions = transactionService.processTransactions(customer.getId(), startDate, endDate);
+
+            // print the transactions
+            for (Transaction transaction : transactions) {
+                System.out.println("Transaction ID: " + transaction.getId() + ", Sender: " + transaction.getSender() + ", Receiver: " + transaction.getReceiver() + ", Amount: " + transaction.getAmount() + ", Date: " + transaction.getCreated() + ", Message: " + transaction.getMessage());
+            }
+
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
+        }
+    }
 
     private void showUserInfoMenu(Customer customer) {
         printMenuHeader("User information"); // Prints the header for the menu
