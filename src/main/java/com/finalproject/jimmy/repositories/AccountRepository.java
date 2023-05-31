@@ -101,8 +101,6 @@ public class AccountRepository {
         return account;
     }
 
-
-
     public boolean accountExists(String accountNumber) {
         try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -138,8 +136,5 @@ public class AccountRepository {
             return false;
         }
     }
-
-
-
 
 }
