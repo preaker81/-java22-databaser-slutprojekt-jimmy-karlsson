@@ -7,11 +7,9 @@ import java.sql.*;
 
 
 public class TransactionRepository {
-    private final AccountRepository accountRepository;
 
-    public TransactionRepository(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
 
+    public TransactionRepository() {
     }
 
     public boolean createTransaction(Transaction transaction) {
