@@ -19,15 +19,15 @@ public class Swosh {
 
 //        Services
         PasswordService passwordService = new PasswordService();
-        PopulateDatabaseService populateDatabaseService = new PopulateDatabaseService(
-                passwordService
-        );
         CustomerService customerService = new CustomerService(
                 customerRepository,
                 passwordService
         );
-
         AccountService accountService = new AccountService();
+        PopulateDatabaseService populateDatabaseService = new PopulateDatabaseService(
+                accountService,
+                passwordService
+        );
         TransactionService transactionService = new TransactionService(
                 accountRepository,
                 transactionRepository

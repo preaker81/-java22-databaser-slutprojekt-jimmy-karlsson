@@ -35,52 +35,61 @@ public class TransactionService {
         }
 
         // Update sender and receiver balances
-        sender.setBalance(sender.getBalance() - amount);
-        receiver.setBalance(receiver.getBalance() + amount);
+        int updatedSenderBalance = sender.getBalance() - amount;
+        int updatedReceiverBalance = receiver.getBalance() + amount;
 
-        // Save changes, exit if unsuccessful
-        if (!accountRepository.updateBalance(senderAccountNumber, sender.getBalance())
-                || !accountRepository.updateBalance(receiverAccountNumber, receiver.getBalance())) {
+        // Try to update balances in the repository
+        boolean isSenderBalanceUpdated = accountRepository.updateBalance(senderAccountNumber, updatedSenderBalance);
+        boolean isReceiverBalanceUpdated = accountRepository.updateBalance(receiverAccountNumber, updatedReceiverBalance);
+
+        // Check if both updates were successful
+        if (!isSenderBalanceUpdated || !isReceiverBalanceUpdated) {
             return false;
         }
 
-        // Create a new transaction
+        // If we reached this point, it means both balances were successfully updated
+        // We can proceed with creating a new transaction
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         Transaction transaction = new Transaction(0, sender.getId(), receiver.getId(), amount, currentTimestamp, message);
 
-        // Save transaction, exit if unsuccessful
-        if (!transactionRepository.createTransaction(transaction)) {
-            return false;
-        }
-
-        // Transaction successfully performed
-        return true;
+        // Return the result of transaction creation directly
+        return transactionRepository.createTransaction(transaction);
     }
+
+
 
     public List<Transaction> processTransactions(int customerId, LocalDate startDate, LocalDate endDate) {
+        // Convert startDate and endDate into LocalDateTime at start and end of respective days
         LocalDateTime startDateTime = getStartOfDay(startDate);
         LocalDateTime endDateTime = getEndOfDay(endDate);
-        ResultSet rs = transactionRepository.fetchTransactionsByCustomer(customerId, startDateTime, endDateTime);
-        return extractTransactionsFromResultSet(rs);
+
+        // Fetch transactions from repository and extract them into a List
+        ResultSet resultSet = transactionRepository.fetchTransactionsByCustomer(customerId, startDateTime, endDateTime);
+        List<Transaction> transactions = resultSetToTransactions(resultSet);
+
+        return transactions;
     }
 
-    private List<Transaction> extractTransactionsFromResultSet(ResultSet rs) {
+    private List<Transaction> resultSetToTransactions(ResultSet resultSet) {
         List<Transaction> transactions = new ArrayList<>();
 
         try {
-            while (rs != null && rs.next()) {
+            // Iterate over each row in the result set
+            while (resultSet != null && resultSet.next()) {
+                // Create a new Transaction object and set its properties from the result set
                 Transaction transaction = new Transaction();
-                transaction.setId(rs.getInt("id"));
-                transaction.setSender(rs.getInt("sender"));
-                transaction.setReceiver(rs.getInt("receiver"));
-                transaction.setAmount(rs.getInt("amount"));
-                transaction.setCreated(rs.getTimestamp("created"));
-                transaction.setMessage(rs.getString("message"));
+                transaction.setId(resultSet.getInt("id"));
+                transaction.setSender(resultSet.getInt("sender"));
+                transaction.setReceiver(resultSet.getInt("receiver"));
+                transaction.setAmount(resultSet.getInt("amount"));
+                transaction.setCreated(resultSet.getTimestamp("created"));
+                transaction.setMessage(resultSet.getString("message"));
 
+                // Add the transaction to the list
                 transactions.add(transaction);
             }
         } catch (SQLException e) {
-            // handle exception, e.g. printStackTrace()
+            // Print stack trace for debugging purposes. In production code, consider using logging.
             e.printStackTrace();
         }
 
@@ -93,9 +102,9 @@ public class TransactionService {
         try {
             dateFormat.parse(dateStr);
         } catch (ParseException e) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public LocalDateTime getStartOfDay(LocalDate date) {

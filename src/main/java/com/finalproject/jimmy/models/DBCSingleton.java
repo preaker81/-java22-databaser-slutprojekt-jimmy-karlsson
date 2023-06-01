@@ -64,20 +64,27 @@ public class DBCSingleton {
     }
 
     public static Connection getConnection() {
-        // The 'double-checked locking' pattern is used here to ensure thread-safety
         DBCSingleton result = db;
-        if (result == null) {
-            synchronized (DBCSingleton.class) {
-                result = db;
-                if (result == null) {
-                    db = new DBCSingleton();
+        try {
+            if (result == null) {
+                synchronized (DBCSingleton.class) {
                     result = db;
+                    if (result == null) {
+                        db = new DBCSingleton();
+                        result = db;
+                    }
                 }
+            } else if (result.connection == null || result.connection.isClosed()) {
+                // If connection is closed, create a new one
+                result.createConnection();
             }
+        } catch (SQLException e) {
+            logger.error("Error checking or creating connection", e);
         }
-        // Return the connection object
+
         return result.connection;
     }
+
 
     public static void close() {
         // Close the connection if it exists and is open

@@ -48,7 +48,7 @@ public class ConsoleInterface {
         this.scanner = scanner;
     }
 
-    public void setupDatabase () {
+    public void setupDatabase() {
         // These calls will create tables and template users if not exist.
         populateDatabaseService.createDatabaseAndTables();
         populateDatabaseService.createTemplateCustomers();
@@ -59,9 +59,9 @@ public class ConsoleInterface {
         int choice;
 
         do {
-            printMenuHeader("Start Menu");
+            printMenuHeader("Start");
             System.out.println("1. Log in.");
-            System.out.println("2. Create customer account.");
+            System.out.println("2. Create new Customer account.");
             System.out.println("0. Exit");
 
             System.out.print("Enter your choice: ");
@@ -86,13 +86,12 @@ public class ConsoleInterface {
                 }
             } else {
                 // Consume invalid input
-                scanner.nextLine();
+                scanner.nextLine(); // Consume newline character
                 System.out.println("Invalid choice. Please try again.");
-                choice = -1; // Set choice to an invalid value to repeat the loop
+                choice = -1;
             }
         } while (choice != 0);
     }
-
 
     private void createCustomerAccountMenu() {
         printMenuHeader("Create new customer account");
@@ -124,8 +123,8 @@ public class ConsoleInterface {
             System.out.println("Customer added successfully.");
 
             // Create default account values
-            String accountName = "Default Account";
-            int initialBalance = 1000;
+            String accountName = "Primary Account";
+            int initialBalance = 2000;
             String accountNumber = accountService.generateAccountNumber();
 
             // Create the account object
@@ -142,12 +141,11 @@ public class ConsoleInterface {
         }
     }
 
-
     private void loginMenu() {
-        printMenuHeader("Login Menu"); // Prints the header for the menu
+        printMenuHeader("Login"); // Prints the header for the menu
         System.out.println(ConsoleColors.YELLOW + "You have two template customer logins you can use.");
-        System.out.println("Customer 1: Anders Andersson, SSN = 20000101-0101, password = 1111.");
-        System.out.println("Customer 2: Berit Bengtsson, SSN = 20000202-0202, password = 2222.");
+        System.out.println("Customer 1: Anders Andersson, SSN = 20230101-0101, password = 1111.");
+        System.out.println("Customer 2: Berit Bengtsson, SSN = 20230202-0202, password = 2222.");
         System.out.println(ConsoleColors.RESET);
 
         boolean loggedIn = false;
@@ -176,31 +174,13 @@ public class ConsoleInterface {
         }
     }
 
-    public void deleteCustomerAccount(Customer customer) {
-        printMenuHeader("Delete Customer account"); // Prints the header for the menu
-        System.out.println("!WARNING! This action is irreversible !WARNING!");
-
-        System.out.println("Enter SSN: ");
-        String SSN = scanner.nextLine();
-        System.out.println("Enter 'DELETE CUSTOMER ACCOUNT' to verify.");
-        String verification = scanner.nextLine();
-
-        if (customer.getSSN().equals(SSN) && "DELETE CUSTOMER ACCOUNT".equals(verification)) {
-            customerRepository.deleteCustomer(SSN);
-        }
-
-    }
-
     private void loggedInMenu(Customer customer) {
         int choice;
 
         do {
-            printMenuHeader("Logged in menu"); // Prints the header for the menu
-            System.out.println("1. " + customer.getName() + "´s Balance accounts.");
-            System.out.println("2. Show user information.");
-            System.out.println("3. Update customer information");
-            System.out.println("4. Transfer money.");
-            System.out.println("5. Delete Customer Account");
+            printMenuHeader("Main menu"); // Prints the header for the menu
+            System.out.println("1. Account options.");
+            System.out.println("2. User information.");
             System.out.println("0. Go back");
             System.out.println("");
 
@@ -215,15 +195,6 @@ public class ConsoleInterface {
                 case 2:
                     showUserInfoMenu(customer);
                     break;
-                case 3:
-                    updateCustomerInfo(customer);
-                    break;
-                case 4:
-                    transferMoneyMenu(customer);
-                    break;
-                case 5:
-                    deleteCustomerAccount(customer);
-                    break;
                 case 0:
                     System.out.println("Going back to the previous menu...");
                     break;
@@ -237,12 +208,13 @@ public class ConsoleInterface {
         int choice;
 
         do {
-            printMenuHeader("Balance account menu"); // Prints the header for the menu
+            printMenuHeader("Account options"); // Prints the header for the menu
             printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
-            System.out.println("1. Create a new balance account");
-            System.out.println("2. Delete a existing balance account");
-            System.out.println("3. Show all transactions made.");
+            System.out.println("1. Create a new balance account.");
+            System.out.println("2. Delete a existing balance account.");
+            System.out.println("3. Transfer money between accounts.");
+            System.out.println("4. Show all Customer transactions made.");
             System.out.println("0. Go back");
             System.out.println("");
 
@@ -258,6 +230,9 @@ public class ConsoleInterface {
                     deleteBalanceAccountMenu(customer);
                     break;
                 case 3:
+                    transferMoneyMenu(customer);
+                    break;
+                case 4:
                     showAllCustomerTransaction(customer);
                     break;
                 case 0:
@@ -270,30 +245,35 @@ public class ConsoleInterface {
     }
 
     private void createBalanceAccountMenu(Customer customer) {
-        printMenuHeader("Create balance account menu"); // Prints the header for the menu
+        printMenuHeader("Create new account"); // Prints the header for the menu
         printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
         System.out.println("Enter the account details...");
         System.out.println("");
-        System.out.println("Account name: ");
+        System.out.println("Account name (leave empty for default name): ");
         String accountName = scanner.nextLine();
+        accountName = accountName.trim();
+
+        // Assign default account name if none is provided
+        if (accountName.isEmpty()) {
+            accountName = "Default Account";
+        }
+
         System.out.println("How much money should it have initially: ");
         int initialBalance = scanner.nextInt();
-
 
         Account account = new Account(0, accountName, Timestamp.from(Instant.now()), customer.getId(), initialBalance, accountService.generateAccountNumber());
 
         // Insert the account into the database
         if (accountRepository.createAccount(account)) {
-            System.out.println("Default account created successfully.");
+            System.out.println("Account '" + accountName + "' created successfully.");
         } else {
-            System.out.println("Failed to create default account.");
+            System.out.println("Failed to create account '" + accountName + "'.");
         }
     }
 
-
     private void deleteBalanceAccountMenu(Customer customer) {
-        printMenuHeader("Delete balance account menu"); // Prints the header for the menu
+        printMenuHeader("Delete account"); // Prints the header for the menu
         printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
         System.out.println("!WARNING! This action is irreversible !WARNING!");
@@ -318,8 +298,33 @@ public class ConsoleInterface {
         }
     }
 
+    public void transferMoneyMenu(Customer customer) {
+
+        printMenuHeader("Transfer funds"); // Prints the header for the menu
+        printCustomerAccounts(customer.getId()); // Prints the customers accounts.
+
+        System.out.println("Sender account number: ");
+        String sender = scanner.nextLine();
+        System.out.println("Receiver account number: ");
+        String receiver = scanner.nextLine();
+        System.out.println("Amount transfered");
+        int amount = scanner.nextInt();
+        scanner.nextLine(); // consume remaining newline
+
+        System.out.println("Transaction message: ");
+        String message = scanner.nextLine();
+
+        boolean result = transactionService.performTransaction(sender, receiver, amount, message);
+
+        if (result) {
+            System.out.println("Transaction completed successfully.");
+        } else {
+            System.out.println("Transaction failed. Please check the details and try again.");
+        }
+    }
+
     private void showAllCustomerTransaction(Customer customer) {
-        printMenuHeader("Customer Transactions");
+        printMenuHeader("All transactions");
 
         System.out.println(ConsoleColors.YELLOW + "Please provide a start and an end date for the transactions you want to see");
         System.out.println(ConsoleColors.RESET);
@@ -328,14 +333,14 @@ public class ConsoleInterface {
 
         System.out.println("Start date 'YYYY-MM-DD'");
         String startDateStr = scanner.next();
-        while(!transactionService.isValidDateFormat(startDateStr)){
+        while (transactionService.isValidDateFormat(startDateStr)) {
             System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
             startDateStr = scanner.next();
         }
 
         System.out.println("End date 'YYYY-MM-DD'");
         String endDateStr = scanner.next();
-        while(!transactionService.isValidDateFormat(endDateStr)){
+        while (transactionService.isValidDateFormat(endDateStr)) {
             System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
             endDateStr = scanner.next();
         }
@@ -364,11 +369,36 @@ public class ConsoleInterface {
         System.out.println("Phone number: " + customer.getPhone());
         System.out.println("-------------------------------------------------------------------");
         printCustomerAccounts(customer.getId()); // Prints the customers accounts.
+        System.out.println("-------------------------------------------------------------------");
+        int choice;
 
+        do {
+            System.out.println("1. Update Customer information.");
+            System.out.println("2. Delete Customer Account (This).");
+            System.out.println("0. Go back");
+
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            switch (choice) {
+                case 1:
+                    updateCustomerInfo(customer);
+                    break;
+                case 2:
+                    deleteCustomerAccount(customer);
+                    break;
+                case 0:
+                    System.out.println("Going back to the previous menu...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 0);
     }
 
     public void updateCustomerInfo(Customer customer) {
-        printMenuHeader("Update customer information"); // Prints the header for the menu
+        printMenuHeader("Update user information"); // Prints the header for the menu
         System.out.println("Enter your new information in the prompt.");
         System.out.println("If you don't need to update a specific field you can just press ENTER.");
 
@@ -417,37 +447,29 @@ public class ConsoleInterface {
         }
     }
 
-    public void transferMoneyMenu(Customer customer) {
+    public void deleteCustomerAccount(Customer customer) {
+        printMenuHeader("Delete user account"); // Prints the header for the menu
+        System.out.println("!WARNING! This action is irreversible !WARNING!");
+        System.out.println("Enter SSN: ");
+        String SSN = scanner.nextLine();
+        System.out.println("Enter " + ConsoleColors.YELLOW + "'DELETE CUSTOMER ACCOUNT'" + ConsoleColors.RESET + " to verify.");
+        String verification = scanner.nextLine();
+        if (customer.getSSN().equals(SSN) && "DELETE CUSTOMER ACCOUNT".equals(verification)) {
+            boolean isDeleted = customerRepository.deleteCustomer(SSN);
 
-        printMenuHeader("Update customer information"); // Prints the header for the menu
-        printCustomerAccounts(customer.getId()); // Prints the customers accounts.
+            if (isDeleted) {
+                System.out.println("Customer account successfully deleted.");
+            } else {
+                System.out.println("Failed to delete customer account. Please check if the provided SSN is correct.");
+            }
 
-        System.out.println("Sender account number: ");
-        String sender = scanner.nextLine();
-        System.out.println("Receiver account number: ");
-        String receiver = scanner.nextLine();
-        System.out.println("Amount transfered");
-        int amount = scanner.nextInt();
-        scanner.nextLine(); // consume remaining newline
-
-        System.out.println("Transaction message: ");
-        String message = scanner.nextLine();
-
-        boolean result = transactionService.performTransaction(sender, receiver, amount, message);
-
-        if (result) {
-            System.out.println("Transaction completed successfully.");
-        } else {
-            System.out.println("Transaction failed. Please check the details and try again.");
+            startMenu();
         }
     }
 
-
     public void printMenuHeader(String header) {
         System.out.println(ConsoleColors.CYAN);
-        System.out.println("*******************************************************************");
-        System.out.println("--------------- === " + header + " === -------------- ");
-        System.out.println("*******************************************************************");
+        System.out.println(" --------------- ==== " + header + " ==== --------------- ");
         System.out.println(ConsoleColors.RESET);
     }
 

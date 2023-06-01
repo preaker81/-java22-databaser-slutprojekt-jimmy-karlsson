@@ -7,20 +7,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// This is the repository class for Account. It contains methods for interacting with the 'account' table in the database.
 public class AccountRepository {
 
-
+    // This method is for creating a new account in the database.
     public boolean createAccount(Account account) {
         try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO account (account_name, created, customer_id, balance, account_number) VALUES (?, ?, ?, ?, ?)")) {
 
+            // Set parameters for the prepared statement from the account object.
             statement.setString(1, account.getAccount_name());
             statement.setTimestamp(2, account.getCreated());
             statement.setInt(3, account.getCustomer_id());
             statement.setInt(4, account.getBalance());
             statement.setString(5, account.getAccount_number());
 
+            // Execute the statement and check if the operation affected any rows.
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -29,6 +32,7 @@ public class AccountRepository {
         }
     }
 
+    // This method is for deleting an account from the database by its account number.
     public boolean deleteAccountByAccountNumber(String accountNumber) {
         try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -44,6 +48,7 @@ public class AccountRepository {
         }
     }
 
+    // This method is for retrieving a list of accounts for a specific customer by their customer ID.
     public List<Account> getAccountsByCustomerID(int inputCustomerId) {
         List<Account> accountList = new ArrayList<>();
 
@@ -55,14 +60,17 @@ public class AccountRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String account_name = resultSet.getString("account_name");
-                    Timestamp created = resultSet.getTimestamp("created");
-                    int customer_id = resultSet.getInt("customer_id");
-                    int balance = resultSet.getInt("balance");
-                    String account_number = resultSet.getString("account_number");
+                    // Map the current row of the result set to an Account object.
+                    Account account = new Account(
+                            resultSet.getInt("id"),
+                            resultSet.getString("account_name"),
+                            resultSet.getTimestamp("created"),
+                            resultSet.getInt("customer_id"),
+                            resultSet.getInt("balance"),
+                            resultSet.getString("account_number")
+                    );
 
-                    Account account = new Account(id, account_name, created, customer_id, balance, account_number);
+                    // Add the account object to the list.
                     accountList.add(account);
                 }
             }
@@ -73,6 +81,7 @@ public class AccountRepository {
         return accountList;
     }
 
+    // This method is for retrieving a single account by its account number.
     public Account getAccountByAccountNumber(String accountNumber) {
         Account account = null;
 
@@ -84,14 +93,15 @@ public class AccountRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String account_name = resultSet.getString("account_name");
-                    Timestamp created = resultSet.getTimestamp("created");
-                    int customer_id = resultSet.getInt("customer_id");
-                    int balance = resultSet.getInt("balance");
-                    String account_number = resultSet.getString("account_number");
-
-                    account = new Account(id, account_name, created, customer_id, balance, account_number);
+                    // Map the current row of the result set to an Account object.
+                    account = new Account(
+                            resultSet.getInt("id"),
+                            resultSet.getString("account_name"),
+                            resultSet.getTimestamp("created"),
+                            resultSet.getInt("customer_id"),
+                            resultSet.getInt("balance"),
+                            resultSet.getString("account_number")
+                    );
                 }
             }
         } catch (SQLException e) {
@@ -101,6 +111,7 @@ public class AccountRepository {
         return account;
     }
 
+    // This method checks if an account exists in the database by its account number.
     public boolean accountExists(String accountNumber) {
         try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -110,8 +121,8 @@ public class AccountRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    int count = resultSet.getInt(1);
-                    return count > 0;
+                    // If count is greater than 0, the account exists.
+                    return resultSet.getInt(1) > 0;
                 }
             }
         } catch (SQLException e) {
@@ -121,6 +132,7 @@ public class AccountRepository {
         return false;
     }
 
+    // This method updates the balance of an account by its account number.
     public boolean updateBalance(String accountNumber, int newBalance) {
         try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -130,11 +142,14 @@ public class AccountRepository {
             statement.setString(2, accountNumber);
 
             int rowsAffected = statement.executeUpdate();
+            // Return true when the balance update is successful.
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            // Return false when there is an exception.
             return false;
         }
     }
+
 
 }

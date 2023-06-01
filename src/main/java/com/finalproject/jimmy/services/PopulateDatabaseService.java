@@ -5,6 +5,7 @@ import com.finalproject.jimmy.models.DBCSingleton;
 import java.sql.*;
 
 public class PopulateDatabaseService {
+    private final AccountService accountService;
     private final PasswordService passwordService;
     private final String DB_NAME = "db_finalproject";
     private final String ACCOUNT_TABLE_NAME = "account";
@@ -49,7 +50,8 @@ public class PopulateDatabaseService {
 
 
 
-    public PopulateDatabaseService(PasswordService passwordService) {
+    public PopulateDatabaseService(AccountService accountService, PasswordService passwordService) {
+        this.accountService = accountService;
         this.passwordService = passwordService;
     }
 
@@ -140,14 +142,14 @@ public class PopulateDatabaseService {
                 return;
             }
 
-            if (!customerExists(connection, "20000101-0101")) {
-                long customerId1 = createCustomer(connection, "Anders Andersson", "20000101-0101", "anders.andersson@mail.se", "0701111111", "1111");
-                createAccount(connection, customerId1, "account 1", 1000, "111111111");
+            if (!customerExists(connection, "20230101-0101")) {
+                long customerId1 = createCustomer(connection, "Anders Andersson", "20230101-0101", "anders.andersson@mail.com", "0702987654", "1111");
+                createAccount(connection, customerId1, "Primary Account", 5000, accountService.generateAccountNumber());
             }
 
-            if (!customerExists(connection, "20000202-0202")) {
-                long customerId2 = createCustomer(connection, "Berit Bengtsson", "20000202-0202", "berit.bengtsson@mail.se", "0702222222", "2222");
-                createAccount(connection, customerId2, "account 1", 1000, "222222222");
+            if (!customerExists(connection, "20230202-0202")) {
+                long customerId2 = createCustomer(connection, "Berit Bengtsson", "20230202-0202", "berit.bengtsson@mail.com", "0702876543", "2222");
+                createAccount(connection, customerId2, "Primary Account", 5000, accountService.generateAccountNumber());
             }
 
         } catch (SQLException e) {
