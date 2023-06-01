@@ -17,17 +17,21 @@ public class DBCSingleton {
     private static final Logger logger = LogManager.getLogger(DBCSingleton.class);
 
     private DBCSingleton() {
-        loadDatabaseProperties();
-        createConnection();
+        try {
+            loadDatabaseProperties();
+            createConnection();
+        } catch (Exception e) {
+            logger.error("Error initializing the database", e);
+            throw new RuntimeException("Failed to initialize the database", e);
+        }
     }
 
-    private void loadDatabaseProperties() {
+    private void loadDatabaseProperties() throws Exception {
         Properties props = new Properties();
 
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("database.properties")) {
             if (input == null) {
-                logger.error("Unable to find database.properties");
-                return;
+                throw new IllegalArgumentException("Unable to find database.properties");
             }
 
             // load properties file
@@ -44,34 +48,27 @@ public class DBCSingleton {
             dataSource.setPassword(password);
             dataSource.setUrl("jdbc:mysql://" + url + ":" + port + "/" + database + "?serverTimezone=UTC");
             dataSource.setUseSSL(false);
-
-        } catch (Exception e) {
-            logger.error("Error loading database properties", e);
         }
     }
 
-    private void createConnection() {
-        try {
-            connection = dataSource.getConnection();
-        } catch (SQLException e) {
-            logger.error("Error creating connection", e);
-        }
+    private void createConnection() throws SQLException {
+        connection = dataSource.getConnection();
     }
 
-    public static Connection getConnection() {
-        try {
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public static DBCSingleton getInstance() {
+        DBCSingleton result = db;
+        if (result == null) {
             synchronized (DBCSingleton.class) {
-                if (db == null) {
-                    db = new DBCSingleton();
-                } else if (db.connection == null || db.connection.isClosed()) {
-                    db.createConnection();
+                result = db;
+                if (result == null) {
+                    db = result = new DBCSingleton();
                 }
             }
-        } catch (SQLException e) {
-            logger.error("Error checking or creating connection", e);
         }
-
-        return db.connection;
+        return result;
     }
-
 }

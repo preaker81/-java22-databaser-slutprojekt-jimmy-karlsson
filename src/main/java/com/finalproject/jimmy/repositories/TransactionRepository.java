@@ -4,6 +4,7 @@ import com.finalproject.jimmy.models.DBCSingleton;
 import com.finalproject.jimmy.models.Transaction;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 
 
 public class TransactionRepository {
@@ -13,7 +14,7 @@ public class TransactionRepository {
     }
 
     public boolean createTransaction(Transaction transaction) {
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO transaction (id, sender, receiver, amount, created, message) VALUES (?, ?, ?, ?, ?, ?)")) {
 
@@ -32,10 +33,8 @@ public class TransactionRepository {
         }
     }
 
-
-
-    public ResultSet fetchTransactionsByCustomer(int customerId, Date startDate, Date endDate) {
-        Connection connection = DBCSingleton.getConnection();
+    public ResultSet fetchTransactionsByCustomer(int customerId, LocalDateTime startDate, LocalDateTime endDate) {
+        Connection connection = DBCSingleton.getInstance().getConnection();
         ResultSet rs = null;
 
         try {
@@ -49,21 +48,16 @@ public class TransactionRepository {
 
             ps.setLong(1, customerId);
             ps.setLong(2, customerId);
-            ps.setDate(3, new java.sql.Date(startDate.getTime()));
-            ps.setDate(4, new java.sql.Date(endDate.getTime()));
+            ps.setTimestamp(3, Timestamp.valueOf(startDate));
+            ps.setTimestamp(4, Timestamp.valueOf(endDate));
 
             rs = ps.executeQuery();
         } catch (SQLException e) {
-            // handle exception, e.g. printStackTrace()
             e.printStackTrace();
         }
 
         return rs;
     }
-
-
-
-
 
 
 

@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -338,8 +340,8 @@ public class ConsoleInterface {
         }
 
         try {
-            Date startDate = dateFormat.parse(startDateStr);
-            Date endDate = dateFormat.parse(endDateStr);
+            LocalDate startDate = LocalDate.parse(startDateStr);
+            LocalDate endDate = LocalDate.parse(endDateStr);
 
             List<Transaction> transactions = transactionService.processTransactions(customer.getId(), startDate, endDate);
 
@@ -348,7 +350,7 @@ public class ConsoleInterface {
                 System.out.println("Transaction ID: " + transaction.getId() + ", Sender: " + transaction.getSender() + ", Receiver: " + transaction.getReceiver() + ", Amount: " + transaction.getAmount() + ", Date: " + transaction.getCreated() + ", Message: " + transaction.getMessage());
             }
 
-        } catch (ParseException e) {
+        } catch (DateTimeParseException e) {
             System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
         }
     }
@@ -462,40 +464,4 @@ public class ConsoleInterface {
         System.out.println("");
     }
 
-
 }
-
-/*
- * Template submenu.
- * */
-
-//    public static void submenu(Scanner scanner) {
-//        int choice;
-//
-//        do {
-//            System.out.println("=== Submenu ===");
-//            System.out.println("1. Suboption 1");
-//            System.out.println("2. Suboption 2");
-//            System.out.println("0. Go back");
-//
-//            System.out.print("Enter your choice: ");
-//            choice = scanner.nextInt();
-//            scanner.nextLine(); // Consume newline character
-//
-//            switch (choice) {
-//                case 1:
-//                    // Handle Suboption 1
-//                    System.out.println("Suboption 1 selected.");
-//                    break;
-//                case 2:
-//                    // Handle Suboption 2
-//                    System.out.println("Suboption 2 selected.");
-//                    break;
-//                case 0:
-//                    System.out.println("Going back to the previous menu...");
-//                    break;
-//                default:
-//                    System.out.println("Invalid choice. Please try again.");
-//            }
-//        } while (choice != 0);
-//    }

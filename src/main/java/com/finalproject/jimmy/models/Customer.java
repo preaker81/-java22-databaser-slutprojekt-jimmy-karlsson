@@ -1,12 +1,12 @@
 package com.finalproject.jimmy.models;
 
 public class Customer {
-protected int id;
-protected String name;
-protected String SSN;
-protected String email;
-protected String phone;
-protected String password;
+    private int id;
+    private String name;
+    private String SSN;
+    private String email;
+    private String phone;
+    private String password;
 
     public Customer(int id, String name, String SSN, String email, String phone, String password) {
         this.id = id;

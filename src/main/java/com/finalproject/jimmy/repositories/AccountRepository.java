@@ -11,7 +11,7 @@ public class AccountRepository {
 
 
     public boolean createAccount(Account account) {
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO account (account_name, created, customer_id, balance, account_number) VALUES (?, ?, ?, ?, ?)")) {
 
@@ -30,7 +30,7 @@ public class AccountRepository {
     }
 
     public boolean deleteAccountByAccountNumber(String accountNumber) {
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "DELETE FROM account WHERE account_number = ?")) {
 
@@ -47,7 +47,7 @@ public class AccountRepository {
     public List<Account> getAccountsByCustomerID(int inputCustomerId) {
         List<Account> accountList = new ArrayList<>();
 
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM account WHERE customer_id = ?")) {
 
@@ -76,7 +76,7 @@ public class AccountRepository {
     public Account getAccountByAccountNumber(String accountNumber) {
         Account account = null;
 
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM account WHERE account_number = ?")) {
 
@@ -102,7 +102,7 @@ public class AccountRepository {
     }
 
     public boolean accountExists(String accountNumber) {
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT COUNT(*) FROM account WHERE account_number = ?")) {
 
@@ -122,7 +122,7 @@ public class AccountRepository {
     }
 
     public boolean updateBalance(String accountNumber, int newBalance) {
-        try (Connection connection = DBCSingleton.getConnection();
+        try (Connection connection = DBCSingleton.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "UPDATE account SET balance = ? WHERE account_number = ?")) {
 

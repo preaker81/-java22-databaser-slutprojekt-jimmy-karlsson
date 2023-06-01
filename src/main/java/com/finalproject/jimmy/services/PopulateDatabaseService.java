@@ -56,7 +56,7 @@ public class PopulateDatabaseService {
     public void createDatabaseAndTables() {
         Connection connection = null;
         try {
-            connection = DBCSingleton.getConnection();
+            connection = DBCSingleton.getInstance().getConnection();
             if (connection == null) {
                 System.out.println("Database connection is null");
                 return;
@@ -108,7 +108,6 @@ public class PopulateDatabaseService {
         }
     }
 
-
     private void createAccount(Connection connection, long customerId, String accountName, double balance, String accountNumber) throws SQLException {
         String query = "INSERT INTO account (account_name, customer_id, balance, account_number) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -135,7 +134,7 @@ public class PopulateDatabaseService {
     public void createTemplateCustomers() {
         Connection connection = null;
         try {
-            connection = DBCSingleton.getConnection();
+            connection = DBCSingleton.getInstance().getConnection();
             if (connection == null) {
                 System.out.println("Database connection is null");
                 return;
@@ -163,7 +162,6 @@ public class PopulateDatabaseService {
             }
         }
     }
-
 
     private boolean databaseExists(Connection connection, String dbName) throws SQLException {
         ResultSet resultSet = connection.getMetaData().getCatalogs();

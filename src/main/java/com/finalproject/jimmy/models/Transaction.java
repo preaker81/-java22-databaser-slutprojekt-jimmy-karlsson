@@ -3,12 +3,12 @@ package com.finalproject.jimmy.models;
 import java.sql.Timestamp;
 
 public class Transaction {
-protected int id;
-protected int sender;
-protected int receiver;
-protected int amount;
-protected Timestamp created;
-protected String message;
+    private int id;
+    private int sender;
+    private int receiver;
+    private int amount;
+    private Timestamp created;
+    private String message;
 
     public Transaction(int id, int sender, int receiver, int amount, Timestamp created, String message) {
         this.id = id;

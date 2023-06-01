@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,13 +57,12 @@ public class TransactionService {
         return true;
     }
 
-    public List<Transaction> processTransactions(int customerId, java.util.Date startDate, java.util.Date endDate) {
-        java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-        java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-        ResultSet rs = transactionRepository.fetchTransactionsByCustomer(customerId, sqlStartDate, sqlEndDate);
+    public List<Transaction> processTransactions(int customerId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = getStartOfDay(startDate);
+        LocalDateTime endDateTime = getEndOfDay(endDate);
+        ResultSet rs = transactionRepository.fetchTransactionsByCustomer(customerId, startDateTime, endDateTime);
         return extractTransactionsFromResultSet(rs);
     }
-
 
     private List<Transaction> extractTransactionsFromResultSet(ResultSet rs) {
         List<Transaction> transactions = new ArrayList<>();
@@ -97,5 +98,12 @@ public class TransactionService {
         return true;
     }
 
+    public LocalDateTime getStartOfDay(LocalDate date) {
+        return date.atStartOfDay();
+    }
+
+    public LocalDateTime getEndOfDay(LocalDate date) {
+        return date.plusDays(1).atStartOfDay().minusNanos(1);
+    }
 
 }

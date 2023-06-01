@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Account {
-    protected int id;
-    protected String account_name;
-    protected Timestamp created;
-    protected int customer_id;
-    protected int balance;
-    protected String account_number;
+    private int id;
+    private String account_name;
+    private Timestamp created;
+    private int customer_id;
+    private int balance;
+    private String account_number;
 
     public Account(int id, String account_name, Timestamp created, int customer_id, int balance, String account_number) {
         this.id = id;
