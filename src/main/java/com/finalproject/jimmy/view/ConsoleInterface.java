@@ -11,12 +11,10 @@ import com.finalproject.jimmy.repositories.CustomerRepository;
 import com.finalproject.jimmy.services.*;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,10 +48,13 @@ public class ConsoleInterface {
         this.scanner = scanner;
     }
 
-    public void startMenu() {
+    public void setupDatabase () {
         // These calls will create tables and template users if not exist.
         populateDatabaseService.createDatabaseAndTables();
         populateDatabaseService.createTemplateCustomers();
+    }
+
+    public void startMenu() {
 
         int choice;
 

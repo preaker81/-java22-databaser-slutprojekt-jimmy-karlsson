@@ -7,7 +7,7 @@ import java.sql.*;
 
 public class CustomerRepository {
     public int createCustomer(Customer customer) {
-        try (Connection connection = DBCSingleton.getInstance().getConnection();
+        try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO customer (name, ssn, email, phone, password) VALUES (?, ?, ?, ?, ?)",
                      Statement.RETURN_GENERATED_KEYS)) {
@@ -33,7 +33,7 @@ public class CustomerRepository {
 
 
     public boolean updateCustomer(Customer customer) {
-        try (Connection connection = DBCSingleton.getInstance().getConnection();
+        try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "UPDATE customer SET name = ?, ssn = ?, email = ?, phone = ?, password = ? WHERE id = ?")) {
 
@@ -56,7 +56,7 @@ public class CustomerRepository {
     public Customer getCustomer(String SSN) {
         String query = "SELECT * FROM customer WHERE SSN=?";
 
-        try (Connection connection = DBCSingleton.getInstance().getConnection();
+        try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, SSN);
@@ -84,7 +84,7 @@ public class CustomerRepository {
     public boolean deleteCustomer(String SSN) {
         String query = "DELETE FROM customer WHERE SSN = ?";
 
-        try (Connection connection = DBCSingleton.getInstance().getConnection();
+        try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, SSN);

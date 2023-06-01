@@ -56,7 +56,7 @@ public class PopulateDatabaseService {
     public void createDatabaseAndTables() {
         Connection connection = null;
         try {
-            connection = DBCSingleton.getInstance().getConnection();
+            connection = DBCSingleton.getConnection();
             if (connection == null) {
                 System.out.println("Database connection is null");
                 return;
@@ -134,7 +134,7 @@ public class PopulateDatabaseService {
     public void createTemplateCustomers() {
         Connection connection = null;
         try {
-            connection = DBCSingleton.getInstance().getConnection();
+            connection = DBCSingleton.getConnection();
             if (connection == null) {
                 System.out.println("Database connection is null");
                 return;

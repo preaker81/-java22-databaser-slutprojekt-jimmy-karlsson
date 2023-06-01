@@ -14,7 +14,7 @@ public class TransactionRepository {
     }
 
     public boolean createTransaction(Transaction transaction) {
-        try (Connection connection = DBCSingleton.getInstance().getConnection();
+        try (Connection connection = DBCSingleton.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO transaction (id, sender, receiver, amount, created, message) VALUES (?, ?, ?, ?, ?, ?)")) {
 
@@ -34,7 +34,7 @@ public class TransactionRepository {
     }
 
     public ResultSet fetchTransactionsByCustomer(int customerId, LocalDateTime startDate, LocalDateTime endDate) {
-        Connection connection = DBCSingleton.getInstance().getConnection();
+        Connection connection = DBCSingleton.getConnection();
         ResultSet rs = null;
 
         try {
