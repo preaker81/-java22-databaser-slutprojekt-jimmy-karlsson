@@ -11,7 +11,6 @@ import com.finalproject.jimmy.repositories.CustomerRepository;
 import com.finalproject.jimmy.services.*;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -72,17 +71,10 @@ public class ConsoleInterface {
                 scanner.nextLine(); // Consume newline character
 
                 switch (choice) {
-                    case 1:
-                        loginMenu();
-                        break;
-                    case 2:
-                        createCustomerAccountMenu();
-                        break;
-                    case 0:
-                        System.out.println("Exiting...");
-                        break;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
+                    case 1 -> loginMenu();
+                    case 2 -> createCustomerAccountMenu();
+                    case 0 -> System.out.println("Exiting...");
+                    default -> System.out.println("Invalid choice. Please try again.");
                 }
             } else {
                 // Consume invalid input
@@ -143,7 +135,7 @@ public class ConsoleInterface {
 
     private void loginMenu() {
         printMenuHeader("Login"); // Prints the header for the menu
-        System.out.println(ConsoleColors.YELLOW + "You have two template customer logins you can use.");
+        System.out.println(ConsoleColors.YELLOW + "You have two template customer logins you can use for testing purposes.");
         System.out.println("Customer 1: Anders Andersson, SSN = 20230101-0101, password = 1111.");
         System.out.println("Customer 2: Berit Bengtsson, SSN = 20230202-0202, password = 2222.");
         System.out.println(ConsoleColors.RESET);
@@ -182,24 +174,16 @@ public class ConsoleInterface {
             System.out.println("1. Account options.");
             System.out.println("2. User information.");
             System.out.println("0. Go back");
-            System.out.println("");
 
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline character
 
             switch (choice) {
-                case 1:
-                    balanceAccountMenu(customer);
-                    break;
-                case 2:
-                    showUserInfoMenu(customer);
-                    break;
-                case 0:
-                    System.out.println("Going back to the previous menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+                case 1 -> balanceAccountMenu(customer);
+                case 2 -> showUserInfoMenu(customer);
+                case 0 -> System.out.println("Going back to the previous menu...");
+                default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
     }
@@ -216,30 +200,18 @@ public class ConsoleInterface {
             System.out.println("3. Transfer money between accounts.");
             System.out.println("4. Show all Customer transactions made.");
             System.out.println("0. Go back");
-            System.out.println("");
 
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline character
 
             switch (choice) {
-                case 1:
-                    createBalanceAccountMenu(customer);
-                    break;
-                case 2:
-                    deleteBalanceAccountMenu(customer);
-                    break;
-                case 3:
-                    transferMoneyMenu(customer);
-                    break;
-                case 4:
-                    showAllCustomerTransaction(customer);
-                    break;
-                case 0:
-                    System.out.println("Going back to the previous menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+                case 1 -> createBalanceAccountMenu(customer);
+                case 2 -> deleteBalanceAccountMenu(customer);
+                case 3 -> transferMoneyMenu(customer);
+                case 4 -> showAllCustomerTransaction(customer);
+                case 0 -> System.out.println("Going back to the previous menu...");
+                default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
     }
@@ -249,7 +221,6 @@ public class ConsoleInterface {
         printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
         System.out.println("Enter the account details...");
-        System.out.println("");
         System.out.println("Account name (leave empty for default name): ");
         String accountName = scanner.nextLine();
         accountName = accountName.trim();
@@ -277,7 +248,6 @@ public class ConsoleInterface {
         printCustomerAccounts(customer.getId()); // Prints the customers accounts.
 
         System.out.println("!WARNING! This action is irreversible !WARNING!");
-        System.out.println("");
         System.out.println("Enter the account number [#########]");
         String accountNumber = scanner.nextLine();
         System.out.println("Enter 'DELETE [#########]' to confirm");
@@ -307,7 +277,7 @@ public class ConsoleInterface {
         String sender = scanner.nextLine();
         System.out.println("Receiver account number: ");
         String receiver = scanner.nextLine();
-        System.out.println("Amount transfered");
+        System.out.println("Amount to transfer");
         int amount = scanner.nextInt();
         scanner.nextLine(); // consume remaining newline
 
@@ -328,8 +298,6 @@ public class ConsoleInterface {
 
         System.out.println(ConsoleColors.YELLOW + "Please provide a start and an end date for the transactions you want to see");
         System.out.println(ConsoleColors.RESET);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         System.out.println("Start date 'YYYY-MM-DD'");
         String startDateStr = scanner.next();
@@ -382,17 +350,10 @@ public class ConsoleInterface {
             scanner.nextLine(); // Consume newline character
 
             switch (choice) {
-                case 1:
-                    updateCustomerInfo(customer);
-                    break;
-                case 2:
-                    deleteCustomerAccount(customer);
-                    break;
-                case 0:
-                    System.out.println("Going back to the previous menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+                case 1 -> updateCustomerInfo(customer);
+                case 2 -> deleteCustomerAccount(customer);
+                case 0 -> System.out.println("Going back to the previous menu...");
+                default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != 0);
     }
@@ -484,7 +445,6 @@ public class ConsoleInterface {
                             "Balance: " + account.getBalance()
             );
         }
-        System.out.println("");
     }
 
 }
