@@ -96,17 +96,6 @@ public class TransactionService {
         return transactions;
     }
 
-    public boolean isValidDateFormat(String dateStr) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            return true;
-        }
-        return false;
-    }
-
     public LocalDateTime getStartOfDay(LocalDate date) {
         return date.atStartOfDay();
     }

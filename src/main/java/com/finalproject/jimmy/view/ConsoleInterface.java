@@ -23,6 +23,7 @@ public class ConsoleInterface {
     private final AccountRepository accountRepository;
     private final PopulateDatabaseService populateDatabaseService;
     private final PasswordService passwordService;
+    private final ValidationService validationService;
     private final CustomerService customerService;
     private final AccountService accountService;
     private final TransactionService transactionService;
@@ -33,6 +34,7 @@ public class ConsoleInterface {
             AccountRepository accountRepository,
             PopulateDatabaseService populateDatabaseService,
             PasswordService passwordService,
+            ValidationService validationService,
             CustomerService customerService,
             AccountService accountService,
             TransactionService transactionService,
@@ -41,6 +43,7 @@ public class ConsoleInterface {
         this.accountRepository = accountRepository;
         this.populateDatabaseService = populateDatabaseService;
         this.passwordService = passwordService;
+        this.validationService = validationService;
         this.customerService = customerService;
         this.accountService = accountService;
         this.transactionService = transactionService;
@@ -101,7 +104,7 @@ public class ConsoleInterface {
         String password = passwordService.hashPassword(scanner.nextLine());
 
         // Validate SSN format
-        if (!customerService.isValidSSN(SSN)) {
+        if (!validationService.isValidSSN(SSN)) {
             System.out.println("Invalid SSN format. Customer not added to the database.");
             return;
         }
@@ -227,7 +230,7 @@ public class ConsoleInterface {
 
         // Assign default account name if none is provided
         if (accountName.isEmpty()) {
-            accountName = "Default Account";
+            accountName = "default account";
         }
 
         System.out.println("How much money should it have initially: ");
@@ -253,7 +256,7 @@ public class ConsoleInterface {
         System.out.println("Enter 'DELETE [#########]' to confirm");
         String confirmAccountNumber = scanner.nextLine();
 
-        if (accountService.isValidConfirmation(accountNumber, confirmAccountNumber)) {
+        if (validationService.isValidConfirmation(accountNumber, confirmAccountNumber)) {
             Account account = accountRepository.getAccountByAccountNumber(accountNumber); // New line
             if (account != null && account.getCustomer_id() == customer.getId()) { // Check if the account belongs to the customer
                 accountRepository.deleteAccountByAccountNumber(accountNumber);
@@ -277,9 +280,8 @@ public class ConsoleInterface {
         String sender = scanner.nextLine();
         System.out.println("Receiver account number: ");
         String receiver = scanner.nextLine();
-        System.out.println("Amount to transfer");
-        int amount = scanner.nextInt();
-        scanner.nextLine(); // consume remaining newline
+
+        int amount = validationService.getValidAmount();
 
         System.out.println("Transaction message: ");
         String message = scanner.nextLine();
@@ -293,6 +295,7 @@ public class ConsoleInterface {
         }
     }
 
+
     private void showAllCustomerTransaction(Customer customer) {
         printMenuHeader("All transactions");
 
@@ -301,14 +304,14 @@ public class ConsoleInterface {
 
         System.out.println("Start date 'YYYY-MM-DD'");
         String startDateStr = scanner.next();
-        while (transactionService.isValidDateFormat(startDateStr)) {
+        while (validationService.isValidDateFormat(startDateStr)) {
             System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
             startDateStr = scanner.next();
         }
 
         System.out.println("End date 'YYYY-MM-DD'");
         String endDateStr = scanner.next();
-        while (transactionService.isValidDateFormat(endDateStr)) {
+        while (validationService.isValidDateFormat(endDateStr)) {
             System.out.println("Invalid date format. Please use 'YYYY-MM-DD'");
             endDateStr = scanner.next();
         }
@@ -374,7 +377,7 @@ public class ConsoleInterface {
 
         System.out.println("Enter a new email " + ConsoleColors.YELLOW + "(Press ENTER to skip)" + ConsoleColors.RESET);
         String newEmail = scanner.nextLine();
-        if (!newEmail.isEmpty() && customerService.isValidEmail(newEmail)) {
+        if (!newEmail.isEmpty() && validationService.isValidEmail(newEmail)) {
             customer.setEmail(newEmail);
             isUpdated = true;
         } else if (!newEmail.isEmpty()) {

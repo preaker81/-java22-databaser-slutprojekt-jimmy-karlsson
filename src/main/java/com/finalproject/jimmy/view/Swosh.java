@@ -8,7 +8,7 @@ import com.finalproject.jimmy.services.*;
 import java.util.Scanner;
 
 public class Swosh {
-    public void startApp(){
+    public void startApp() {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -19,6 +19,9 @@ public class Swosh {
 
 //        Services
         PasswordService passwordService = new PasswordService();
+        ValidationService validationService = new ValidationService(
+                scanner
+        );
         CustomerService customerService = new CustomerService(
                 customerRepository,
                 passwordService
@@ -39,6 +42,7 @@ public class Swosh {
                 accountRepository,
                 populateDatabaseService,
                 passwordService,
+                validationService,
                 customerService,
                 accountService,
                 transactionService,

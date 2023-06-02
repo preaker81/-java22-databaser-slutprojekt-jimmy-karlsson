@@ -13,10 +13,4 @@ public class AccountService {
         return String.format("%09d", accountNumber);
     }
 
-    public boolean isValidConfirmation(String accountNumber, String confirmAccountNumber) {
-        String expectedConfirmation = "DELETE " + accountNumber;
-
-        return confirmAccountNumber.equals(expectedConfirmation);
-    }
-
 }
